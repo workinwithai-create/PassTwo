@@ -494,6 +494,18 @@ async function bounce(){
   Object.keys(buffers).forEach(k => delete buffers[k]);
   Object.assign(buffers, prevBuf);
   const rendered = await off.startRendering();
+  const probe = rendered.getChannelData(0);
+  let delay = 0;
+  for (let i = 0; i < Math.min(probe.length, 960); i++) {
+    if (Math.abs(probe[i]) > 0.01) { delay = i; break; }
+  }
+  if (delay > 0) {
+    for (let c = 0; c < rendered.numberOfChannels; c++) {
+      const data = rendered.getChannelData(c);
+      const copy = data.slice();
+      for (let i = 0; i < data.length; i++) data[i] = copy[i + delay] || 0;
+    }
+  }
   let peak = 0;
   for (let c = 0; c < rendered.numberOfChannels; c++) {
     const data = rendered.getChannelData(c);
