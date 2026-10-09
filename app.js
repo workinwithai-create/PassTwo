@@ -471,9 +471,10 @@ async function bounce(){
   const decoded = {};
   for (const name of Object.keys(raw)) decoded[name] = await off.decodeAudioData(raw[name].slice(0));
   const prev = chairGain;
-  const prevBuf = buffers;
+  const prevBuf = { ...buffers };
   chairGain = localGains;
-  buffers = decoded;
+  Object.keys(buffers).forEach(k => delete buffers[k]);
+  Object.assign(buffers, decoded);
   const stepDur = 60 / state.bpm / 4;
   let t = 0;
   for (let i = 0; i < BARS * STEPS; i++) {
@@ -481,7 +482,8 @@ async function bounce(){
     t += stepDur;
   }
   chairGain = prev;
-  buffers = prevBuf;
+  Object.keys(buffers).forEach(k => delete buffers[k]);
+  Object.assign(buffers, prevBuf);
   const rendered = await off.startRendering();
   let peak = 0;
   for (let c = 0; c < rendered.numberOfChannels; c++) {
