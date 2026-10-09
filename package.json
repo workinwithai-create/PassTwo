@@ -1,0 +1,7 @@
+{
+  "name": "passtwo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Second-pass inner-motion desk. The four-bar loop stays. The second pass does not photocopy it.",
+  "scripts": { "start": "python3 -m http.server 4173" }
+}

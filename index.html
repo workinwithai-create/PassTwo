@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PassTwo — second-pass inner motion</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="tap" class="tap">Tap to start audio</div>
+  <header>
+    <p class="eyebrow">WorkinWithAI · live chairs</p>
+    <h1>PassTwo</h1>
+    <p class="lede">The four-bar loop stays. The second pass does not photocopy it. Inner voices move. Bass roots and the kick keep the one.</p>
+  </header>
+  <section class="transport">
+    <label>BPM <input id="bpm" type="number" min="60" max="180" value="98" /></label>
+    <label>Key
+      <select id="key"></select>
+    </label>
+    <label class="grow">Four chords <input id="chords" type="text" value="Am F C G" spellcheck="false" /></label>
+    <button id="playA" type="button">A · reprint</button>
+    <button id="playB" type="button">B · develop</button>
+    <button id="stop" type="button">Stop</button>
+  </section>
+  <p id="status" class="status">Tap to seat the chairs</p>
+  <section>
+    <h2>Recipe</h2>
+    <div id="recipes" class="grid"></div>
+  </section>
+  <section>
+    <h2>Chairs</h2>
+    <div id="mutes" class="mutes"></div>
+  </section>
+  <section>
+    <h2>Eight bars</h2>
+    <div id="bars" class="bars"></div>
+    <p class="note">A reprints bars 1–4 on bars 5–8. B keeps the chords and moves the inside. Playhead follows the audio clock. iOS silent switch mutes Web Audio. This desk is not a keyboard.</p>
+  </section>
+  <section class="exports">
+    <button id="wav" type="button">WAV loop</button>
+    <button id="wavTail" type="button">WAV with tail</button>
+    <button id="mid" type="button">MIDI</button>
+    <button id="copy" type="button">Copy punch list</button>
+  </section>
+  <pre id="punch"></pre>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+:root { color-scheme: dark; --ink:#e7e1d4; --dim:#9a917f; --line:#3a342c; --tag:#c4a46a; --bg:#16130f; }
+* { box-sizing: border-box; }
+body { margin: 0; font: 16px/1.45 Georgia, serif; background: var(--bg); color: var(--ink); padding: 24px 20px 64px; max-width: 980px; }
+.eyebrow { letter-spacing: .14em; text-transform: uppercase; font: 12px/1 ui-sans-serif, system-ui, sans-serif; color: var(--tag); }
+h1 { font-weight: 500; font-size: 42px; margin: 4px 0; }
+.lede, .note { color: var(--dim); max-width: 62ch; }
+.transport, .exports { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin: 16px 0; }
+label { display: flex; flex-direction: column; gap: 4px; font: 12px/1 ui-sans-serif, system-ui, sans-serif; color: var(--dim); }
+label.grow { flex: 1; min-width: 220px; }
+input, select, button { font: 15px/1.2 ui-sans-serif, system-ui, sans-serif; background: #221e18; color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+button { cursor: pointer; }
+button.on, .card.on { border-color: var(--tag); color: var(--tag); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+.card { text-align: left; }
+.card b { display: block; }
+.card span { color: var(--dim); font-size: 13px; }
+.mutes { display: flex; flex-wrap: wrap; gap: 8px; }
+.bars { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; }
+.bar { border: 1px solid var(--line); border-radius: 8px; padding: 8px; min-height: 72px; }
+.bar.pass { border-color: #6d5a38; }
+.bar.active { background: #2c261c; border-color: var(--tag); }
+.bar .n { font: 11px/1 ui-sans-serif, system-ui, sans-serif; color: var(--dim); }
+.status { font: 13px/1.3 ui-sans-serif, system-ui, sans-serif; color: var(--tag); }
+pre { white-space: pre-wrap; background: #100e0b; border: 1px solid var(--line); padding: 12px; border-radius: 8px; font: 13px/1.4 ui-monospace, monospace; }
+.tap { position: fixed; inset: 0; background: rgba(10,8,6,.92); display: grid; place-items: center; font: 22px/1 ui-sans-serif, system-ui, sans-serif; z-index: 5; cursor: pointer; }
+.tap.hidden { display: none; }
+@media (max-width: 720px) { .bars { grid-template-columns: repeat(4, 1fr); } h1 { font-size: 32px; } }
