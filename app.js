@@ -216,11 +216,20 @@ function track(src){
   };
 }
 
+function leadSkip(buf){
+  const d = buf.getChannelData(0);
+  const limit = Math.min(d.length, Math.floor(buf.sampleRate * 0.04));
+  let i = 0;
+  while (i < limit && Math.abs(d[i]) < 0.02) i++;
+  return i / buf.sampleRate;
+}
+
 function playHit(audio, name, chair, when, rate, gain, dur){
   if (state.mutes[chair] || !buffers[name] || missing.includes(name)) return;
   const src = audio.createBufferSource();
   src.buffer = buffers[name];
   src.playbackRate.value = rate || 1;
+  const skip = (chair === "kick" || chair === "snare" || chair === "hat") ? leadSkip(buffers[name]) : 0;
   const g = audio.createGain();
   const peak = gain;
   g.gain.setValueAtTime(0.0001, when);
@@ -230,7 +239,7 @@ function playHit(audio, name, chair, when, rate, gain, dur){
   g.gain.linearRampToValueAtTime(0.0001, end);
   src.connect(g);
   g.connect(chairGain[chair] || master);
-  src.start(when);
+  src.start(when, skip);
   src.stop(end + 0.02);
   if (audio === ctx) track(src);
 }
