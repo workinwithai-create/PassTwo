@@ -224,9 +224,9 @@ function playHit(audio, name, chair, when, rate, gain, dur){
   const g = audio.createGain();
   const peak = gain;
   g.gain.setValueAtTime(0.0001, when);
-  g.gain.linearRampToValueAtTime(peak, when + 0.008);
-  const end = when + (dur || 0.18);
-  g.gain.setValueAtTime(peak, Math.max(when + 0.01, end - 0.02));
+  g.gain.linearRampToValueAtTime(peak, when + 0.001);
+  const end = when + Math.max(dur || 0.18, 0.016);
+  g.gain.setValueAtTime(peak, Math.max(when + 0.002, end - 0.012));
   g.gain.linearRampToValueAtTime(0.0001, end);
   src.connect(g);
   g.connect(chairGain[chair] || master);
