@@ -8,6 +8,12 @@ PassTwo seats live chairs on that cut. A is the reprint. B is the developed seco
 
 This build is free.
 
+## This morning
+
+Milestone: mobile onboarding and a DAW-grid export check. The tap gate stays up until the audio clock is running, controls are 44px / 16px so iOS does not zoom, and `passTwoExportCheck` bounces 8 bars at 92 BPM / 48 kHz.
+
+This build is still free. Checkout and license delivery are not connected. Do not call it shipped.
+
 ## Distinct from the line
 
 | Tool | Job |

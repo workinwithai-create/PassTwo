@@ -444,9 +444,19 @@ function encodeWav(audioBuffer, withTail){
 }
 
 async function renderOffline(withTail){
+  const rendered = await bounce(withTail);
+  if (!rendered) return;
+  const blob = encodeWav(rendered.buffer, withTail);
+  const rec = state.recipe;
+  const name = `passtwo-${rec}-${state.bpm}bpm-${state.key}${withTail ? "-tail" : ""}.wav`;
+  download(blob, name);
+  return { blob, ...rendered };
+}
+
+async function bounce(){
   await ensureAudio();
   if (!Object.keys(raw).length) await loadSamples();
-  if (missing.length) return;
+  if (missing.length) return null;
   const tailSec = 0.45;
   const exact = Math.round(BARS * 4 * 60 / state.bpm * SR);
   const total = exact + Math.round(tailSec * SR);
@@ -473,11 +483,50 @@ async function renderOffline(withTail){
   chairGain = prev;
   buffers = prevBuf;
   const rendered = await off.startRendering();
-  const blob = encodeWav(rendered, withTail);
-  const rec = state.recipe;
-  const name = `passtwo-${rec}-${state.bpm}bpm-${state.key}.${withTail ? "tail.wav" : "wav"}`;
-  download(blob, name.replace(".tail.wav", "-tail.wav"));
+  let peak = 0;
+  for (let c = 0; c < rendered.numberOfChannels; c++) {
+    const data = rendered.getChannelData(c);
+    for (let i = 0; i < data.length; i++) peak = Math.max(peak, Math.abs(data[i]));
+  }
+  const left = rendered.getChannelData(0);
+  let first = -1;
+  for (let i = 0; i < left.length; i++) if (Math.abs(left[i]) > 0.01) { first = i; break; }
+  return { buffer: rendered, exact, samples: rendered.length, firstTransientSample: first, peak };
 }
+
+async function exportCheck(){
+  const prev = { bpm: state.bpm, key: state.key, mode: state.mode };
+  state.bpm = 92;
+  state.key = "A";
+  state.mode = "develop";
+  saveState();
+  paint();
+  const result = await bounce();
+  state.bpm = prev.bpm; state.key = prev.key; state.mode = prev.mode;
+  saveState();
+  paint();
+  if (!result) return { ok: false, missing: missing.slice() };
+  const expected = 1001739;
+  const blob = encodeWav(result.buffer, false);
+  const bytes = new Uint8Array(await blob.arrayBuffer());
+  const wavSamples = (bytes.length - 44) / 6;
+  let seam = 0;
+  const left = result.buffer.getChannelData(0);
+  for (let i = 0; i < 64; i++) seam = Math.max(seam, Math.abs((left[i] || 0) + (left[expected + i] || 0)));
+  return {
+    ok: wavSamples === expected && result.firstTransientSample >= 0 && result.firstTransientSample <= 48,
+    expected,
+    exact: result.exact,
+    wavSamples,
+    renderedWithTail: result.samples,
+    firstTransientSample: result.firstTransientSample,
+    firstTransientMs: result.firstTransientSample / SR * 1000,
+    peak: result.peak,
+    peakDbfs: result.peak > 0 ? 20 * Math.log10(result.peak) : -Infinity,
+    seamPreview: seam
+  };
+}
+window.passTwoExportCheck = exportCheck;
 
 function midiBytes(){
   const tpq = 480;
@@ -553,7 +602,9 @@ function bind(){
   $("wav").onclick = () => renderOffline(false);
   $("wavTail").onclick = () => renderOffline(true);
   $("mid").onclick = () => download(midiBytes(), `passtwo-${state.recipe}-${state.bpm}bpm-${state.key}.mid`);
-  $("tap").onclick = async () => { await ensureAudio(); if (!Object.keys(buffers).length) await loadSamples(); };
+  const startAudio = async () => { await ensureAudio(); if (!Object.keys(buffers).length) await loadSamples(); };
+  $("tap").onclick = startAudio;
+  $("tapBtn").onclick = (e) => { e.stopPropagation(); startAudio(); };
   document.addEventListener("visibilitychange", () => { if (document.hidden) stop(); });
   paint();
   requestAnimationFrame(playhead);
